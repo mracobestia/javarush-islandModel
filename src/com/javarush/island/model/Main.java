@@ -10,6 +10,7 @@ public class Main {
         GameField gameField = GameField.getInstance();
 
         GameInterface gameInterface = new GameInterface();
+        //GameInterface_one_thread gameInterface = new GameInterface_one_thread();
         gameInterface.initializeGame(gameField);
 
     }

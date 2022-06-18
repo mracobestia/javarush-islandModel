@@ -1,16 +1,16 @@
 package com.javarush.island.model.animals.predators;
 
-import lombok.EqualsAndHashCode;
 import com.javarush.island.model.common.BasicItem;
 import com.javarush.island.model.common.GameField;
 import com.javarush.island.model.settings.Settings;
 import com.javarush.island.model.animals.Animal;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class Predator extends Animal {
 
     private final Map<Class, Integer> eatingProbabilitySettings;
@@ -21,7 +21,7 @@ public class Predator extends Animal {
     }
 
     @Override
-    public void eat() {
+    public Animal eat() {
 
         Settings settings = GameField.getInstance().getSettings();
         double saturation = this.getCurrentSaturation();
@@ -34,27 +34,38 @@ public class Predator extends Animal {
         }
 
         List<BasicItem> itemsOnPosition = this.getPosition().getItemsOnPosition();
-        List<BasicItem> edibleItemsOnPosition = itemsOnPosition.stream()
+        List<Animal> edibleItemsOnPosition = itemsOnPosition.stream()
+                .filter(el -> Animal.isAnimal(el.getClass()))
+                .map(Animal.class::cast)
                 .filter(el -> eatingProbabilitySettings.containsKey(el.getClass()) && eatingProbabilitySettings.get(el.getClass()) > 0)
                 .toList();
 
-        if (edibleItemsOnPosition.isEmpty())
-            return;
+        if (edibleItemsOnPosition.isEmpty()) {
+            this.setNumberOfDaysWithoutEating(this.getNumberOfDaysWithoutEating()+1);
+            return null;
+        }
 
         int itemIndex = ThreadLocalRandom.current().nextInt(edibleItemsOnPosition.size());
-        BasicItem itemToEat = edibleItemsOnPosition.get(itemIndex);
-        int itemToEatEatingMaxProbability = eatingProbabilitySettings.get(itemToEat.getClass());
+        Animal animalToEat = edibleItemsOnPosition.get(itemIndex);
+        int itemToEatEatingMaxProbability = eatingProbabilitySettings.get(animalToEat.getClass());
 
         int eatingProbability = ThreadLocalRandom.current().nextInt(101);
-        if (eatingProbability < itemToEatEatingMaxProbability && itemToEat instanceof Animal animalToEat) {
-            itemsOnPosition.remove(itemToEat);
+        if (eatingProbability < itemToEatEatingMaxProbability) {
 
             if (animalToEat.getWeight() > (this.getFullSaturation() - this.getCurrentSaturation())) {
                 this.setCurrentSaturation(this.getFullSaturation());
             } else {
                 this.setCurrentSaturation(this.getFullSaturation() - this.getCurrentSaturation() + animalToEat.getWeight());
             }
+
+            this.setNumberOfDaysWithoutEating(0);
+
+            return animalToEat;
+        } else {
+            this.setNumberOfDaysWithoutEating(this.getNumberOfDaysWithoutEating()+1);
         }
+
+        return null;
 
     }
 

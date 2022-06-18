@@ -1,5 +1,6 @@
 package com.javarush.island.model.animals.herbivores;
 
+import com.javarush.island.model.animals.Animal;
 
 public class Caterpillar extends Herbivore {
 
@@ -9,8 +10,8 @@ public class Caterpillar extends Herbivore {
     }
 
     @Override
-    public void eat() {
-
+    public Animal eat() {
+        return null;
     }
 
 }

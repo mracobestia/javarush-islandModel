@@ -3,9 +3,11 @@ package com.javarush.island.model.plants;
 import com.javarush.island.model.common.BasicItem;
 import com.javarush.island.model.common.GameField;
 import com.javarush.island.model.settings.Settings;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode(callSuper = true)
 public abstract class Plant extends BasicItem {
 
     private final double weight;

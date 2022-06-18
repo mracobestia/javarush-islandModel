@@ -4,17 +4,17 @@ import com.javarush.island.model.common.BasicItem;
 import com.javarush.island.model.common.GameField;
 import com.javarush.island.model.settings.Settings;
 import com.javarush.island.model.plants.Plant;
-import lombok.EqualsAndHashCode;
 import com.javarush.island.model.animals.Animal;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class Herbivore extends Animal {
 
     @Override
-    public void eat() {
+    public Animal eat() {
 
         Settings settings = GameField.getInstance().getSettings();
         double saturation = this.getCurrentSaturation();
@@ -31,8 +31,10 @@ public class Herbivore extends Animal {
                 .filter(el -> el.getClass().getSuperclass().equals(Plant.class))
                 .toList();
 
-        if (plantsOnPosition.isEmpty())
-            return;
+        if (plantsOnPosition.isEmpty()) {
+            this.setNumberOfDaysWithoutEating(this.getNumberOfDaysWithoutEating()+1);
+            return null;
+        }
 
         int plantIndex = ThreadLocalRandom.current().nextInt(plantsOnPosition.size());
         Plant plantToEat = (Plant) plantsOnPosition.get(plantIndex);
@@ -44,6 +46,10 @@ public class Herbivore extends Animal {
         } else {
             this.setCurrentSaturation(this.getFullSaturation() - this.getCurrentSaturation() + plantToEat.getWeight());
         }
+
+        this.setNumberOfDaysWithoutEating(0);
+
+        return null;
 
     }
 

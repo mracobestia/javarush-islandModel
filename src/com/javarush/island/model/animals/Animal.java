@@ -14,11 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Getter
-@EqualsAndHashCode()
 @ToString
+@EqualsAndHashCode(callSuper = true)
 public abstract class Animal extends BasicItem {
 
     private final double weight;
@@ -32,6 +33,10 @@ public abstract class Animal extends BasicItem {
     private double currentSaturation = 0.0;
     @Setter
     private int numberOfDaysBeforeReproduce = 0;
+    @Setter
+    private boolean isTravelThisDay = false;
+    @Setter
+    private int numberOfDaysWithoutEating = 0;
 
     protected Animal() {
         Settings settings = GameField.getInstance().getSettings();
@@ -44,7 +49,7 @@ public abstract class Animal extends BasicItem {
         id = java.util.UUID.randomUUID();
     }
 
-    public abstract void eat();
+    public abstract Animal eat();
 
     public void travel() {
 
@@ -52,11 +57,10 @@ public abstract class Animal extends BasicItem {
 
         int travelSpeed = ThreadLocalRandom.current().nextInt(this.getMaxTravelSpeed()) + 1;
 
-        TravelDirections travelDirection = selectTravelDirection();
         FieldPosition currentPosition = this.getPosition();
+        FieldPosition newPosition;
 
-        FieldPosition newPosition = null;
-
+        TravelDirections travelDirection = selectTravelDirection();
         switch (travelDirection) {
             case UP -> {
                 int newY = currentPosition.getY() - travelSpeed;
@@ -72,7 +76,7 @@ public abstract class Animal extends BasicItem {
                     newPosition = travel(newY - gameField.getWidth() + 1,
                             gameField.getPosition(currentPosition.getX(), gameField.getWidth()-1));
                 } else {
-                    newPosition = new FieldPosition(currentPosition.getX(), newY);
+                    newPosition = gameField.getPosition(currentPosition.getX(), newY);
                 }
             }
             case RIGHT -> {
@@ -94,18 +98,28 @@ public abstract class Animal extends BasicItem {
             }
         }
 
-        List<BasicItem> itemsOnPosition = currentPosition.getItemsOnPosition();
-        Map<Class, Long> itemsOnPositionByClass = itemsOnPosition
+        ReentrantLock locker = new ReentrantLock();
+
+        locker.lock();
+        List<BasicItem> itemsOnNewPosition = newPosition.getItemsOnPosition();
+        Map<Class, Long> itemsOnPositionByClass = itemsOnNewPosition
                 .stream()
                 .collect(Collectors.groupingBy(BasicItem::getClass, Collectors.counting()));
 
-        if (itemsOnPositionByClass.containsKey(this.getClass())
-                && itemsOnPositionByClass.get(this.getClass()) <= this.getMaxNumberOfSpeciesOnPosition()) {
+        boolean isThisClassOnPosition = itemsOnPositionByClass.containsKey(this.getClass());
+        boolean couldAddMoreAnimals = false;
+        if (isThisClassOnPosition) {
+            couldAddMoreAnimals = itemsOnPositionByClass.get(this.getClass()) <= Long.valueOf(this.getMaxNumberOfSpeciesOnPosition());
+        }
+
+        if (!isThisClassOnPosition || couldAddMoreAnimals) {
             currentPosition.clearItemOnPosition(this);
 
             this.setPosition(newPosition);
+            this.setTravelThisDay(true);
             newPosition.addItemOnPosition(this);
         }
+        locker.unlock();
 
     }
 
@@ -114,7 +128,6 @@ public abstract class Animal extends BasicItem {
         GameField gameField = GameField.getInstance();
 
         TravelDirections travelDirection = selectTravelDirection();
-
         switch (travelDirection) {
             case UP -> {
                 int newY = currentPosition.getY() - travelSpeed;
@@ -187,7 +200,7 @@ public abstract class Animal extends BasicItem {
             return;
         }
 
-        Animal child = null;
+        Animal child;
         try {
             child = this.getClass().getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

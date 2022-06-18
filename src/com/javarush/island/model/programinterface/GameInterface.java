@@ -4,7 +4,6 @@ import com.javarush.island.model.common.FieldPosition;
 import com.javarush.island.model.common.GameField;
 import com.javarush.island.model.common.exceptions.AnimalReproducingException;
 import com.javarush.island.model.common.exceptions.ObjectInitializationException;
-import com.javarush.island.model.plants.Herb;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,7 +12,10 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Phaser;
 
 
 public class GameInterface {
@@ -61,31 +63,69 @@ public class GameInterface {
 
     public void startGame(GameField gameField, String outputCatalogPath) {
 
-        FieldPosition[][] positions = gameField.getPositions();
-        PrintStatistics printer = new PrintStatistics(outputCatalogPath, positions);
+        FieldPosition[][] fieldPositions = gameField.getPositions();
 
+        PrintStatistics printer = new PrintStatistics(outputCatalogPath, fieldPositions);
         String separator = FileSystems.getDefault().getSeparator();
 
         printer.printInitializationStatistic();
+
+        ExecutorService executorService = Executors.newCachedThreadPool();
         for (int i = 0; i < gameField.getNumberOfGameDays(); i++) {
 
-            Herb.grow();
+            Phaser phaser = new Phaser(1);
+            int threadNumber = 0;
+            for (FieldPosition[] positions : fieldPositions) {
+                for (FieldPosition position : positions) {
+                    executorService.submit(new PhaseThread(phaser, "PhaseThread " + threadNumber, position));
+                    threadNumber++;
+                }
+            }
+
+            // Herb is growing
+            phaser.arriveAndAwaitAdvance();
+
+            // Reset animals travelling flag
+            phaser.arriveAndAwaitAdvance();
 
             try (FileWriter fileWriter = new FileWriter(outputCatalogPath + separator + FILE_NAME + (i + 1) + FILE_EXTENSION);
                  PrintWriter printWriter = new PrintWriter(fileWriter)) {
 
+                // Animals travelling
+                phaser.arriveAndAwaitAdvance();
                 printer.printDayTravellingStatistic(printWriter);
+
+                // Animals eating
+                phaser.arriveAndAwaitAdvance();
                 printer.printDayEatingStatistic(printWriter);
+
+                // Animals reproducing
+                phaser.arriveAndAwaitAdvance();
                 printer.printDayReproducingStatistic(printWriter);
+
+                // Animals are dying of hunger
+                phaser.arriveAndAwaitAdvance();
+                printer.printDayDyingOfHungerStatistic(printWriter);
 
             } catch (AnimalReproducingException e) {
                 System.err.println(e.getErrorMessage());
+                executorService.shutdown();
+                break;
             } catch (IOException e) {
-                System.err.println("Problems with writing statistic files in your directory.");
+                System.err.println("Problems with writing statistic files in your directory: "+ e.getMessage());
+                executorService.shutdown();
+                break;
+            } finally {
+                phaser.arriveAndDeregister();
             }
-        }
-    }
 
+        }
+
+        if (!executorService.isShutdown()) {
+            executorService.shutdown();
+        }
+
+    }
 
     private boolean isExit(String userLine) {
         return userLine.equals(EXIT_MODE);
@@ -109,3 +149,4 @@ public class GameInterface {
 
     }
 }
+

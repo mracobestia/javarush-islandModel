@@ -13,10 +13,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GameField {
 
     private static GameField gameField;
-    private int width;
-    private int height;
-    private FieldPosition[][] positions;
-    private Settings settings = new Settings();
+    private final int width;
+    private final int height;
+    private final FieldPosition[][] positions;
+    private final Settings settings = new Settings();
     @Setter
     private int numberOfGameDays;
 
