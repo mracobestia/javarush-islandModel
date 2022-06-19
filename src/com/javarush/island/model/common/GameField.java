@@ -12,6 +12,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @Getter
 public class GameField {
 
+    private static final String ERROR_TEXT = "Failed to initialize field with objects.";
+
     private static GameField gameField;
     private final int width;
     private final int height;
@@ -89,7 +91,7 @@ public class GameField {
                 try {
                     newInstance = aClass.getConstructor().newInstance();
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    throw new ObjectInitializationException("Failed to initialize field with objects.");
+                    throw new ObjectInitializationException(ERROR_TEXT);
                 }
                 this.positions[i][j].addItemOnPosition((BasicItem) newInstance);
                 ((BasicItem) newInstance).setPosition(this.positions[i][j]);
@@ -113,7 +115,7 @@ public class GameField {
                 try {
                     newInstance = aClass.getConstructor().newInstance();
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    throw new ObjectInitializationException("Failed to initialize field with objects.");
+                    throw new ObjectInitializationException(ERROR_TEXT);
                 }
                 this.positions[i][j].addItemOnPosition((BasicItem) newInstance);
                 ((BasicItem) newInstance).setPosition(this.positions[i][j]);

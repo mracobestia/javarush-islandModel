@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class PrintStatistics {
 
     private String outputCatalogPath;
-    private FieldPosition[][] positions;
+    private final FieldPosition[][] positions;
     private static final String PRINT_DELIMITER = "//////////////////////////////////////////////////////////////////";
     private static final String INITIALIZE_FILE_NAME = "initialize.txt";
     private static final String INITIALIZE_TITLE = "After initialization:";
@@ -23,15 +23,13 @@ public class PrintStatistics {
     private static final String EATING_TITLE = "After eating:";
     private static final String REPRODUCING_TITLE = "After reproducing:";
     private static final String DYING_TITLE = "After dying of hunger:";
-    private static final String POSITION_NAME = "Position ";
-    private static final String CLASS_NAME = "Class";
 
     public PrintStatistics(String outputCatalogPath, FieldPosition[][] positions) {
         this.outputCatalogPath = outputCatalogPath;
         this.positions = positions;
     }
 
-    public void printInitializationStatistic() {
+    public void printInitializationStatistic() throws IOException {
 
         String separator = FileSystems.getDefault().getSeparator();
 
@@ -41,8 +39,6 @@ public class PrintStatistics {
             printWriter.println(INITIALIZE_TITLE);
             statisticsOutput(positions, printWriter);
 
-        } catch (IOException e) {
-            System.err.println("Problems with writing statistic files in your directory.");
         }
 
     }
@@ -86,9 +82,6 @@ public class PrintStatistics {
         for (FieldPosition[] pos : positions) {
             for (FieldPosition fieldPosition : pos) {
 
-               /* String str = POSITION_NAME + (fieldPosition.getX() + 1) + ":" + (fieldPosition.getY() + 1);
-                printWriter.println(str);*/
-
                 List<BasicItem> itemsOnPosition = fieldPosition.getItemsOnPosition();
                 totalNumberOfAnimals += itemsOnPosition.size();
 
@@ -104,9 +97,6 @@ public class PrintStatistics {
                         totalNumberOfAnimalsByClasses.put(aClass, p);
                     }
                 });
-
-                /*itemsOnPositionByClass.forEach((aClass, p) -> printWriter.printf(CLASS_NAME + " %s: %s\n", aClass.getSimpleName(), p));
-                printWriter.println();*/
 
             }
         }

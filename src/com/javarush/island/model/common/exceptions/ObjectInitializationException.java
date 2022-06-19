@@ -2,7 +2,7 @@ package com.javarush.island.model.common.exceptions;
 
 public class ObjectInitializationException extends RuntimeException {
 
-    private String errorMessage;
+    private final String errorMessage;
 
     public ObjectInitializationException(String errorMessage) {
         this.errorMessage = errorMessage;

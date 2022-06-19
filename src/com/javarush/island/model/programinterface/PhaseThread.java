@@ -3,13 +3,14 @@ package com.javarush.island.model.programinterface;
 import com.javarush.island.model.animals.Animal;
 import com.javarush.island.model.common.FieldPosition;
 import com.javarush.island.model.common.GameField;
+import com.javarush.island.model.common.exceptions.AnimalReproducingException;
 import com.javarush.island.model.plants.Herb;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Phaser;
 
-public class PhaseThread implements Runnable{
+public class PhaseThread extends Thread {
 
     Phaser phaser;
     String name;
@@ -24,6 +25,7 @@ public class PhaseThread implements Runnable{
         phaser.register();
     }
 
+    @Override
     public void run(){
 
         Herb.grow(position);
@@ -38,7 +40,16 @@ public class PhaseThread implements Runnable{
         animalsEating();
         phaser.arriveAndAwaitAdvance();
 
-        animalsReproducing();
+        try {
+            animalsReproducing();
+        } catch (AnimalReproducingException ex) {
+            System.err.println(name + " : " + ex.getErrorMessage());
+        } finally {
+            if (!phaser.isTerminated()) {
+                phaser.forceTermination();
+            }
+       }
+
         phaser.arriveAndAwaitAdvance();
 
         animalsDyingOfHunger();

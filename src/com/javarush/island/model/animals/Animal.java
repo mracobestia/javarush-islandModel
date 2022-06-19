@@ -206,9 +206,12 @@ public abstract class Animal extends BasicItem {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new AnimalReproducingException("Failed to create new animal in reproducing.");
         }
+
         child.setPosition(this.getPosition());
         this.getPosition().addItemOnPosition(child);
         child.setNumberOfDaysBeforeReproduce(itemToReproduce.getReproduceFrequency());
+
+        throw new AnimalReproducingException("Failed to create new animal in reproducing.");
 
     }
 

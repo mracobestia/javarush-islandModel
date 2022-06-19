@@ -13,9 +13,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Settings {
 
     @Getter
-    private final int defaultGameFieldWidth = 5;
+    private final int defaultGameFieldWidth = 20;
     @Getter
-    private final int defaultGameFieldHeight = 10;
+    private final int defaultGameFieldHeight = 100;
     @Getter
     private final int animalReproduceFrequency = 2;
     @Getter

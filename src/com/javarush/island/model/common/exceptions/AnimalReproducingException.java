@@ -2,7 +2,7 @@ package com.javarush.island.model.common.exceptions;
 
 public class AnimalReproducingException extends RuntimeException {
 
-    private String errorMessage;
+    private final String errorMessage;
 
     public AnimalReproducingException(String errorMessage) {
         this.errorMessage = errorMessage;
