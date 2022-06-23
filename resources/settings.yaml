@@ -1,6 +1,6 @@
 ---
-defaultGameFieldWidth: 5
-defaultGameFieldHeight: 10
+defaultGameFieldWidth: 20
+defaultGameFieldHeight: 100
 animalReproduceFrequency : 2
 maxNumberOfDaysWithoutEating: 2
 possibleAnimalClasses:
