@@ -37,24 +37,14 @@ public class MainGameThread {
             System.err.println(ERROR_TEXT + e.getMessage());
         }
 
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                System.out.println("Caught " + e);
-            }
-        });
-
         ExecutorService executorService = Executors.newCachedThreadPool();
         for (int i = 0; i < gameField.getNumberOfGameDays(); i++) {
 
             Phaser phaser = new Phaser(1);
-            int threadNumber = 0;
             for (FieldPosition[] positions : fieldPositions) {
                 for (FieldPosition position : positions) {
                     String threadName = "PhaseThread for position " + (position.getX()+1) + ":" + (position.getY()+1);
-                    PhaseThread phaseThread = new PhaseThread(phaser, threadName, position);
-                    executorService.submit(phaseThread);
-                    threadNumber++;
+                    executorService.submit(new PhaseThread(phaser, threadName, position));
                 }
             }
 
@@ -80,18 +70,12 @@ public class MainGameThread {
                 printer.printDayReproducingStatistic(printWriter);
 
                 // Animals are dying of hunger
-                phaser.arriveAndAwaitAdvance();
+                phaser.arriveAndDeregister();
                 printer.printDayDyingOfHungerStatistic(printWriter);
 
             } catch (IOException e) {
                 System.err.println(ERROR_TEXT + e.getMessage());
                 executorService.shutdown();
-                break;
-            } finally {
-                phaser.arriveAndDeregister();
-            }
-
-            if (phaser.isTerminated()) {
                 break;
             }
 

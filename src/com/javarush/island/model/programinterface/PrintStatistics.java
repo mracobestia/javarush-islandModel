@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class PrintStatistics {
 
-    private String outputCatalogPath;
+    private final String outputCatalogPath;
     private final FieldPosition[][] positions;
     private static final String PRINT_DELIMITER = "//////////////////////////////////////////////////////////////////";
     private static final String INITIALIZE_FILE_NAME = "initialize.txt";
@@ -23,6 +23,9 @@ public class PrintStatistics {
     private static final String EATING_TITLE = "After eating:";
     private static final String REPRODUCING_TITLE = "After reproducing:";
     private static final String DYING_TITLE = "After dying of hunger:";
+    private static final String TOTAL_BY_CLASSES_TITLE = "Total number of animals by classes: ";
+    private static final String TOTAL_TITLE = "Total number of animals: ";
+    private static final String CLASS_STRING = "Class %s: %s\n";
 
     public PrintStatistics(String outputCatalogPath, FieldPosition[][] positions) {
         this.outputCatalogPath = outputCatalogPath;
@@ -101,10 +104,10 @@ public class PrintStatistics {
             }
         }
 
-        printWriter.println("Total number of animals by classes: ");
-        totalNumberOfAnimalsByClasses.forEach((aClass, p) -> printWriter.printf("Class " + " %s: %s\n", aClass.getSimpleName(), p));
+        printWriter.println(TOTAL_BY_CLASSES_TITLE);
+        totalNumberOfAnimalsByClasses.forEach((aClass, p) -> printWriter.printf(CLASS_STRING, aClass.getSimpleName(), p));
         printWriter.println();
-        printWriter.println("Total number of animals: " + totalNumberOfAnimals);
+        printWriter.println(TOTAL_TITLE + totalNumberOfAnimals);
 
     }
 

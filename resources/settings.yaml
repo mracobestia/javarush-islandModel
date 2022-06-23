@@ -1,0 +1,148 @@
+---
+defaultGameFieldWidth: 5
+defaultGameFieldHeight: 10
+animalReproduceFrequency : 2
+maxNumberOfDaysWithoutEating: 2
+possibleAnimalClasses:
+  - com.javarush.island.model.animals.predators.Wolf
+  - com.javarush.island.model.animals.predators.Boa
+  - com.javarush.island.model.animals.predators.Fox
+  - com.javarush.island.model.animals.predators.Bear
+  - com.javarush.island.model.animals.predators.Eagle
+  - com.javarush.island.model.animals.herbivores.Horse
+  - com.javarush.island.model.animals.herbivores.Deer
+  - com.javarush.island.model.animals.herbivores.Rabbit
+  - com.javarush.island.model.animals.herbivores.Mouse
+  - com.javarush.island.model.animals.herbivores.Goat
+  - com.javarush.island.model.animals.herbivores.Sheep
+  - com.javarush.island.model.animals.herbivores.Boar
+  - com.javarush.island.model.animals.herbivores.Buffalo
+  - com.javarush.island.model.animals.herbivores.Duck
+  - com.javarush.island.model.animals.herbivores.Caterpillar
+maxNumbersOfSpeciesOnPosition:
+  com.javarush.island.model.animals.predators.Wolf: 30
+  com.javarush.island.model.animals.predators.Boa: 30
+  com.javarush.island.model.animals.predators.Fox: 30
+  com.javarush.island.model.animals.predators.Bear: 5
+  com.javarush.island.model.animals.predators.Eagle: 20
+  com.javarush.island.model.animals.herbivores.Horse: 20
+  com.javarush.island.model.animals.herbivores.Deer: 20
+  com.javarush.island.model.animals.herbivores.Rabbit: 150
+  com.javarush.island.model.animals.herbivores.Mouse: 500
+  com.javarush.island.model.animals.herbivores.Goat: 140
+  com.javarush.island.model.animals.herbivores.Sheep: 140
+  com.javarush.island.model.animals.herbivores.Boar: 50
+  com.javarush.island.model.animals.herbivores.Buffalo: 10
+  com.javarush.island.model.animals.herbivores.Duck: 200
+  com.javarush.island.model.animals.herbivores.Caterpillar: 1000
+  com.javarush.island.model.plants.Herb: 200
+maxTravelSpeed:
+  com.javarush.island.model.animals.predators.Wolf: 3
+  com.javarush.island.model.animals.predators.Boa: 1
+  com.javarush.island.model.animals.predators.Fox: 2
+  com.javarush.island.model.animals.predators.Bear: 2
+  com.javarush.island.model.animals.predators.Eagle: 3
+  com.javarush.island.model.animals.herbivores.Horse: 4
+  com.javarush.island.model.animals.herbivores.Deer: 4
+  com.javarush.island.model.animals.herbivores.Rabbit: 2
+  com.javarush.island.model.animals.herbivores.Mouse: 1
+  com.javarush.island.model.animals.herbivores.Goat: 3
+  com.javarush.island.model.animals.herbivores.Sheep: 3
+  com.javarush.island.model.animals.herbivores.Boar: 2
+  com.javarush.island.model.animals.herbivores.Buffalo: 3
+  com.javarush.island.model.animals.herbivores.Duck: 4
+  com.javarush.island.model.animals.herbivores.Caterpillar: 0
+weights:
+  com.javarush.island.model.animals.predators.Wolf: 50.0
+  com.javarush.island.model.animals.predators.Boa: 15.0
+  com.javarush.island.model.animals.predators.Fox: 8.0
+  com.javarush.island.model.animals.predators.Bear: 500.0
+  com.javarush.island.model.animals.predators.Eagle: 6.0
+  com.javarush.island.model.animals.herbivores.Horse: 400.0
+  com.javarush.island.model.animals.herbivores.Deer: 300.0
+  com.javarush.island.model.animals.herbivores.Rabbit: 2.0
+  com.javarush.island.model.animals.herbivores.Mouse: 0.05
+  com.javarush.island.model.animals.herbivores.Goat: 60.0
+  com.javarush.island.model.animals.herbivores.Sheep: 70.0
+  com.javarush.island.model.animals.herbivores.Boar: 400.0
+  com.javarush.island.model.animals.herbivores.Buffalo: 700.0
+  com.javarush.island.model.animals.herbivores.Duck: 1.0
+  com.javarush.island.model.animals.herbivores.Caterpillar: 0.01
+  com.javarush.island.model.plants.Herb: 1.0
+saturation:
+  com.javarush.island.model.animals.predators.Wolf: 8.0
+  com.javarush.island.model.animals.predators.Boa: 3.0
+  com.javarush.island.model.animals.predators.Fox: 2.0
+  com.javarush.island.model.animals.predators.Bear: 80.0
+  com.javarush.island.model.animals.predators.Eagle: 1.0
+  com.javarush.island.model.animals.herbivores.Horse: 60.0
+  com.javarush.island.model.animals.herbivores.Deer: 50.0
+  com.javarush.island.model.animals.herbivores.Rabbit: 0.45
+  com.javarush.island.model.animals.herbivores.Mouse: 0.01
+  com.javarush.island.model.animals.herbivores.Goat: 10.0
+  com.javarush.island.model.animals.herbivores.Sheep: 15.0
+  com.javarush.island.model.animals.herbivores.Boar: 50.0
+  com.javarush.island.model.animals.herbivores.Buffalo: 100.0
+  com.javarush.island.model.animals.herbivores.Duck: 0.15
+  com.javarush.island.model.animals.herbivores.Caterpillar: 0.0
+eatingProbabilitySettings:
+  com.javarush.island.model.animals.predators.Wolf:
+    com.javarush.island.model.animals.herbivores.Horse: 10
+    com.javarush.island.model.animals.herbivores.Deer: 15
+    com.javarush.island.model.animals.herbivores.Rabbit: 60
+    com.javarush.island.model.animals.herbivores.Mouse: 80
+    com.javarush.island.model.animals.herbivores.Goat: 60
+    com.javarush.island.model.animals.herbivores.Sheep: 70
+    com.javarush.island.model.animals.herbivores.Boar: 15
+    com.javarush.island.model.animals.herbivores.Buffalo: 10
+    com.javarush.island.model.animals.herbivores.Duck: 40
+  com.javarush.island.model.animals.predators.Boa:
+    com.javarush.island.model.animals.predators.Fox: 15
+    com.javarush.island.model.animals.herbivores.Rabbit: 20
+    com.javarush.island.model.animals.herbivores.Mouse: 40
+    com.javarush.island.model.animals.herbivores.Duck: 10
+  com.javarush.island.model.animals.predators.Fox:
+    com.javarush.island.model.animals.herbivores.Rabbit: 70
+    com.javarush.island.model.animals.herbivores.Mouse: 90
+    com.javarush.island.model.animals.herbivores.Duck: 60
+    com.javarush.island.model.animals.herbivores.Caterpillar: 40
+  com.javarush.island.model.animals.predators.Bear:
+    com.javarush.island.model.animals.predators.Boa: 80
+    com.javarush.island.model.animals.herbivores.Horse: 40
+    com.javarush.island.model.animals.herbivores.Deer: 80
+    com.javarush.island.model.animals.herbivores.Rabbit: 80
+    com.javarush.island.model.animals.herbivores.Mouse: 90
+    com.javarush.island.model.animals.herbivores.Goat: 70
+    com.javarush.island.model.animals.herbivores.Sheep: 70
+    com.javarush.island.model.animals.herbivores.Boar: 50
+    com.javarush.island.model.animals.herbivores.Buffalo: 20
+    com.javarush.island.model.animals.herbivores.Duck: 10
+  com.javarush.island.model.animals.predators.Eagle:
+    com.javarush.island.model.animals.predators.Fox: 10
+    com.javarush.island.model.animals.herbivores.Rabbit: 90
+    com.javarush.island.model.animals.herbivores.Mouse: 90
+    com.javarush.island.model.animals.herbivores.Duck: 80
+  com.javarush.island.model.animals.herbivores.Horse:
+    com.javarush.island.model.plants.Herb: 100
+  com.javarush.island.model.animals.herbivores.Deer:
+    com.javarush.island.model.plants.Herb: 100
+  com.javarush.island.model.animals.herbivores.Rabbit:
+    com.javarush.island.model.plants.Herb: 100
+  com.javarush.island.model.animals.herbivores.Mouse:
+    com.javarush.island.model.animals.herbivores.Caterpillar: 90
+    com.javarush.island.model.plants.Herb: 100
+  com.javarush.island.model.animals.herbivores.Goat:
+    com.javarush.island.model.plants.Herb: 100
+  com.javarush.island.model.animals.herbivores.Sheep:
+    com.javarush.island.model.plants.Herb: 100
+  com.javarush.island.model.animals.herbivores.Boar:
+    com.javarush.island.model.animals.herbivores.Mouse: 50
+    com.javarush.island.model.animals.herbivores.Caterpillar: 90
+    com.javarush.island.model.plants.Herb: 100
+  com.javarush.island.model.animals.herbivores.Buffalo:
+    com.javarush.island.model.plants.Herb: 100
+  com.javarush.island.model.animals.herbivores.Duck:
+    com.javarush.island.model.animals.herbivores.Caterpillar: 90
+    com.javarush.island.model.plants.Herb: 100
+  com.javarush.island.model.animals.herbivores.Caterpillar:
+    com.javarush.island.model.plants.Herb: 100

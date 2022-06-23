@@ -65,7 +65,7 @@ public class GameInterface {
         Path path = Paths.get(filePath);
 
         if (!Files.isDirectory(path)) {
-            System.out.println("It is not a directory. Please, select the directory.");
+            System.err.println("It is not a directory. Please, select the directory.");
             isValid = false;
         }
 

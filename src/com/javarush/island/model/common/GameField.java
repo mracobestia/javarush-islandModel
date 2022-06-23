@@ -1,10 +1,13 @@
 package com.javarush.island.model.common;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.javarush.island.model.common.exceptions.ObjectInitializationException;
 import com.javarush.island.model.settings.Settings;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -15,23 +18,15 @@ public class GameField {
     private static final String ERROR_TEXT = "Failed to initialize field with objects.";
 
     private static GameField gameField;
-    private final int width;
-    private final int height;
-    private final FieldPosition[][] positions;
-    private final Settings settings = new Settings();
+    private int width;
+    private int height;
+    private FieldPosition[][] positions;
+    private Settings settings;
     @Setter
     private int numberOfGameDays;
 
-    private GameField(int width, int height) {
-        this.height = height;
-        this.width = width;
-        this.positions = new FieldPosition[this.height][this.width];
-    }
-
     private GameField() {
-        this.height = settings.getDefaultGameFieldHeight();
-        this.width = settings.getDefaultGameFieldWidth();
-        this.positions = new FieldPosition[this.height][this.width];
+
     }
 
     public static GameField getInstance() {
@@ -42,21 +37,33 @@ public class GameField {
         return gameField;
     }
 
-    public static GameField getInstance(int width, int height) {
-        if (gameField==null || gameField.width != width || gameField.height != height) {
-            gameField = new GameField(width, height);
-        }
-
-        return gameField;
-    }
-
     public void initialize() {
+        initializeBySettings();
         initializeFieldPositions();
         initializeAnimalsOnPositions();
     }
 
     public FieldPosition getPosition(int x, int y) {
         return positions[x][y];
+    }
+
+    private void initializeBySettings() {
+
+        ClassLoader classLoader = getClass().getClassLoader();;
+        File file = new File(classLoader.getResource("settings.yaml").getFile());
+
+        ObjectMapper objectMapper = new YAMLMapper();
+
+        try {
+            settings = objectMapper.readValue(file, Settings.class);
+        } catch (Exception e) {
+            throw new ObjectInitializationException(ERROR_TEXT);
+        }
+
+        this.height = settings.getDefaultGameFieldHeight();
+        this.width = settings.getDefaultGameFieldWidth();
+        this.positions = new FieldPosition[this.height][this.width];
+
     }
 
     private void initializeFieldPositions() {
@@ -72,59 +79,59 @@ public class GameField {
     // Для каждого вида количество животных будет выбранно рандомно с учетом максимально допустимого в клетке
     private void initializeAnimalsOnPositions() {
 
-        int step = ThreadLocalRandom.current().nextInt(2) + 1;
-        List<Class> possibleClasses = settings.getPossibleAnimalClasses();
+        int stepForFieldFillingByAnimals = ThreadLocalRandom.current().nextInt(2) + 1;
+        List<Class> possibleAnimalsClassesToFillField = settings.getPossibleAnimalClasses();
 
-        int i = 0;
-        int j = 0;
-        while (i < this.height && j < this.width) {
+        int heightCounter = 0;
+        int widthCounter = 0;
+        while (heightCounter < this.height && widthCounter < this.width) {
             // First species
-            int species1 = ThreadLocalRandom.current().nextInt(possibleClasses.size());
-            Class aClass = possibleClasses.get(species1);
+            int firstSpeciesOfAnimalToFill = ThreadLocalRandom.current().nextInt(possibleAnimalsClassesToFillField.size());
+            Class firstClassOfAnimalToFill = possibleAnimalsClassesToFillField.get(firstSpeciesOfAnimalToFill);
 
             // Count of animals of first species
-            int maxCount = settings.getMaxNumbersOfSpeciesOnPositionForClass(aClass);
-            int countOfSpecies1 = ThreadLocalRandom.current().nextInt(maxCount);
+            int maxCountClassOfAnimal = settings.getMaxNumbersOfSpeciesOnPositionForClass(firstClassOfAnimalToFill);
+            int countFirstClassOfAnimalToFill = ThreadLocalRandom.current().nextInt(maxCountClassOfAnimal);
 
-            for (int k = 0; k < countOfSpecies1; k++) {
-                Object newInstance = null;
+            for (int k = 0; k < countFirstClassOfAnimalToFill; k++) {
+                Object newAnimalInstance;
                 try {
-                    newInstance = aClass.getConstructor().newInstance();
+                    newAnimalInstance = firstClassOfAnimalToFill.getConstructor().newInstance();
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     throw new ObjectInitializationException(ERROR_TEXT);
                 }
-                this.positions[i][j].addItemOnPosition((BasicItem) newInstance);
-                ((BasicItem) newInstance).setPosition(this.positions[i][j]);
+                this.positions[heightCounter][widthCounter].addItemOnPosition((BasicItem) newAnimalInstance);
+                ((BasicItem) newAnimalInstance).setPosition(this.positions[heightCounter][widthCounter]);
             }
 
             // Second species
-            int species2 = ThreadLocalRandom.current().nextInt(possibleClasses.size()) ;
-            if (species2 == species1 && species2 == possibleClasses.size() - 1) {
-                species2--;
-            } else if (species2 == species1 && species2 != possibleClasses.size() - 1) {
-                species2++;
+            int secondSpeciesOfAnimalToFill = ThreadLocalRandom.current().nextInt(possibleAnimalsClassesToFillField.size()) ;
+            if (secondSpeciesOfAnimalToFill == firstSpeciesOfAnimalToFill && secondSpeciesOfAnimalToFill == possibleAnimalsClassesToFillField.size() - 1) {
+                secondSpeciesOfAnimalToFill--;
+            } else if (secondSpeciesOfAnimalToFill == firstSpeciesOfAnimalToFill && secondSpeciesOfAnimalToFill != possibleAnimalsClassesToFillField.size() - 1) {
+                secondSpeciesOfAnimalToFill++;
             }
-            aClass = possibleClasses.get(species2);
+            firstClassOfAnimalToFill = possibleAnimalsClassesToFillField.get(secondSpeciesOfAnimalToFill);
 
             // Count of animals of second species
-            maxCount = settings.getMaxNumbersOfSpeciesOnPositionForClass(aClass);
-            int countOfSpecies2 = ThreadLocalRandom.current().nextInt(maxCount);
+            maxCountClassOfAnimal = settings.getMaxNumbersOfSpeciesOnPositionForClass(firstClassOfAnimalToFill);
+            int countSecondClassOfAnimalToFill = ThreadLocalRandom.current().nextInt(maxCountClassOfAnimal);
 
-            for (int k = 0; k < countOfSpecies2; k++) {
-                Object newInstance = null;
+            for (int k = 0; k < countSecondClassOfAnimalToFill; k++) {
+                Object newAnimalInstance;
                 try {
-                    newInstance = aClass.getConstructor().newInstance();
+                    newAnimalInstance = firstClassOfAnimalToFill.getConstructor().newInstance();
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     throw new ObjectInitializationException(ERROR_TEXT);
                 }
-                this.positions[i][j].addItemOnPosition((BasicItem) newInstance);
-                ((BasicItem) newInstance).setPosition(this.positions[i][j]);
+                this.positions[heightCounter][widthCounter].addItemOnPosition((BasicItem) newAnimalInstance);
+                ((BasicItem) newAnimalInstance).setPosition(this.positions[heightCounter][widthCounter]);
             }
 
-            j += step;
-            if (j >= this.width) {
-                j = j - this.width;
-                i++;
+            widthCounter += stepForFieldFillingByAnimals;
+            if (widthCounter >= this.width) {
+                widthCounter = widthCounter - this.width;
+                heightCounter++;
             }
         }
 
