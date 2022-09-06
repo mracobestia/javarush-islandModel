@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="javarush-islandmodel:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/javarush_islandmodel_jar</output-path>
+    <root id="archive" name="javarush-islandmodel.jar">
+      <element id="module-output" name="javarush-islandmodel" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../Libraries/lombok.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
