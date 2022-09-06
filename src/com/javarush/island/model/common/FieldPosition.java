@@ -3,7 +3,7 @@ package com.javarush.island.model.common;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
